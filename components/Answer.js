@@ -11,7 +11,7 @@ function Answer({ index, title, highlight, onPress }) {
           ? styles.containerNoHighlight
           : highlight[index] == 1
           ? styles.containerCorrect
-          : styles.containerCorrect
+          : styles.containerIncorrect
       }
       onPress={onPress}
     >

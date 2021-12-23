@@ -31,7 +31,7 @@ function QuizScreen() {
           data.incorrect_answers.map((ans) => {
             return { correct: false, value: decode(ans) };
           })
-        ),
+        ).sort(() => Math.random() - 0.5),
       };
     });
     return modifiedQuestions;
@@ -46,21 +46,33 @@ function QuizScreen() {
   }, []);
 
   const handleAnswerPress = (key) => {
-    if (questions[0].answers[key].correct) {
-      highlight[key] = 1;
-      setHighlight([...highlight]);
-    }
-    setTimeout(() => {
-      questions.shift();
-      if (questions.length <= 3) {
-        getMoreQuestions(10).then((res) => {
-          setQuestions([...questions].concat(res));
-        });
+    if (!answerClicked) {
+      setAnswerClicked(true);
+      if (questions[0].answers[key].correct) {
+        highlight[key] = 1;
       } else {
-        setQuestions([...questions]);
+        highlight[key] = 2;
+        for (let i = 0; i < 4; i++) {
+          if (questions[0].answers[i].correct) {
+            highlight[i] = 1;
+            break;
+          }
+        }
       }
-      setHighlight([0, 0, 0, 0]);
-    }, 2000);
+      setHighlight([...highlight]);
+      setTimeout(() => {
+        questions.shift();
+        if (questions.length <= 3) {
+          getMoreQuestions(10).then((res) => {
+            setQuestions([...questions].concat(res));
+          });
+        } else {
+          setQuestions([...questions]);
+        }
+        setHighlight([0, 0, 0, 0]);
+      }, 2000);
+      setAnswerClicked(false);
+    }
   };
 
   return (
